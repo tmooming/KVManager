@@ -1,0 +1,14 @@
+[Unit]
+Description=HTTP Interface Server KVManager
+After=syslog.target
+
+[Service]
+KillSignal=SIGQUIT
+ExecStart=/srv/KVManager/env/bin/gunicorn -c /srv/KVManager/server/gconfig.py wsgi:my_app
+Restart=always
+Type=notify
+NotifyAccess=all
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
