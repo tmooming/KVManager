@@ -67,11 +67,11 @@ def initialize_routes(api):
     api.add_resource(InstanceResizeCMD, '/api/instance_resize_cmd/<name>', endpoint='instance_resize_cmd')
     api.add_resource(InstanceImageInfo, '/api/instance_image_info/<name>', endpoint='instance_image_info')
     api.add_resource(InstanceImageUpload, '/api/upload_instance_image/<name>', endpoint='upload_instance_image')
-    api.add_resource(InstanceUploadPrepareInfo, '/api/upload_instance_image_info', endpoint='upload_instance_image_info')
+    api.add_resource(InstanceUploadPrepareInfo, '/api/upload_instance_image_info/<uuid>', endpoint='upload_instance_image_info')
 
     api.add_resource(OpenstackConnect, '/api/openstack_connect', endpoint='openstack_connect')
     api.add_resource(OpenstackDisconnect, '/api/openstack_disconnect', endpoint='openstack_disconnect')
     api.add_resource(ImagesDetail, '/api/image_lists/<id_md5>', endpoint='openstack_image_lists')
     api.add_resource(ImageUpdate, '/api/image_update/<id>', endpoint='glance_image_update')
     api.add_resource(ImageUpload, '/api/image_upload/<name>', endpoint='glance_image_upload')
-    api.add_resource(ImageUploadInfo, '/api/image_upload_info', endpoint='glance_image_upload_info')
+    api.add_resource(ImageUploadInfo, '/api/image_upload_info/<uuid>', endpoint='glance_image_upload_info')

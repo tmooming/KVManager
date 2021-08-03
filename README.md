@@ -33,7 +33,15 @@ sudo systemctl enable mysql
 sudo systemctl restart mysql
 ```
 
-#### 2.安装依赖
+#### 2.安装redis
+
+```shell
+# 自行安装，注意配置密码
+```
+
+
+
+#### 3.安装依赖
 
 ```shell
 sudo apt-get -y install git virtualenv python3-virtualenv python3-dev python3-lxml libvirt-dev zlib1g-dev libxml2-dev libxslt1-dev nginx libsasl2-modules gcc pkg-config python3-guestfs libsasl2-dev libldap2-dev libssl-dev nodejs npm --fix-missing
@@ -47,16 +55,24 @@ git clone https://github.com/tmooming/KVManager.git
 cd 
 ```
 
-#### 3. 配置
+#### 4. 配置
 
 ```shell
 cd KVManager
 vitualenv env
 source env/bin/activate
 cd client
+# 修改后端地址
+vim src/utils/cors-requests.js
 yarn install
 yarn run build:prod
-pip install -r ../server/requirments.txt
+cd ../server
+pip install -r requirments.txt
+# 将地址改成本机IP
+vim kvmanager.conf
+vim gconfig.py
+# 根据需求，修改镜像上传模块地址
+vim resources/kvm/instance.py
 cp kvmanager.conf /etc/nginx/conf.d/
 cp kvmanager.service /etc/systemd/system/
 sudo systemctl daemon-reload

@@ -14,7 +14,6 @@ import pymysql
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
 
-
 # influxdb
 # 2.0 or 1.8
 # INFLUXDB_URI = os.environ.get('INFLUXDB_URI', 'http://ts-bp152kjb99d41g2fg.influxdata.rds.aliyuncs.com:3242')
@@ -44,3 +43,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # mongodb
 MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://')
+
+# redis
+REDIS_URL = "redis://:123456@localhost:6379/0"
+

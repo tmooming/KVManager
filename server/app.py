@@ -10,15 +10,12 @@
 
     ***************************  
 """
+import datetime
+
 from flask.config import Config
-from databases import mysqldb
+from databases import mysqldb,redis_client
 from flask import Flask
 from flask_cors import CORS
-from flask_migrate import Migrate
-from flask_httpauth import HTTPBasicAuth
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from itsdangerous import BadSignature, SignatureExpired
-from flask import session
 from flask_restful import Api
 from logging.config import dictConfig
 
@@ -38,39 +35,22 @@ except Exception as e:
 
 logger = logging.getLogger('app')
 
-errors = {
-    # StandardError(Exception)的子类
-    "TypeError":{
-        'message': "TypeError 错误信息已被修改",
-        'status': 200,
-        'extra': "TypeError 被修改了，你看吧",
-    },
-    # HTTPException的子类
-    "BadRequest":{
-        'message': "BadRequest 错误信息已被修改",
-        'status': 200,
-        'extra': "BadRequest 被修改了，你看吧",
-    }
-}
-
 # ============= factory ================
 def create_app(configName='production'):
     app = Flask('server')
     Config = config[configName]
     app.config.from_object('settings')
     app.config.from_object(Config)
-    app.config['SECRET_KEY'] = 'qwertyuioplkjhgfdsazxcvb'
     CORS(app,supports_credentials=True, resources={r"/api/*": {"origins": "*"}})
     api = Api(app)
     api.init_app(app)
-    # register_errors(app)
-    #sessions.init_app(app)
     # init influxdb client
     # influxdb.init_app(app)
     # init mongodb
     # mongodb.init_app(app)
     # init mysqldb
     mysqldb.init_app(app)
+    redis_client.init_app(app)
     # init Marshmallow
     ma.init_app(app)
     # register resources

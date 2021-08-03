@@ -24,6 +24,7 @@
 from .influx import influxdb
 from .mongo import mongodb
 from .mysql import mysqldb
+from .redis import redis_client
 import sys,os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

@@ -88,6 +88,26 @@ LOGGING = {
             'interval': 1,
             'backupCount': 30,
         },
+        'gunicorn_access': {
+            "class":"logging.handlers.TimedRotatingFileHandler",
+            'level': 'DEBUG',
+            'formatter': 'verbose',
+            'filename': os.path.join(os.path.sep, BASE_DIR_LOG,'gunicorn_access', 'gunicorn_access-'+SUFFIX),
+            'encoding': 'utf8',
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 30,
+        },
+        'gunicorn_error': {
+            "class":"logging.handlers.TimedRotatingFileHandler",
+            'level': 'DEBUG',
+            'formatter': 'verbose',
+            'filename': os.path.join(os.path.sep, BASE_DIR_LOG, 'logs/gunicorn_error', 'gunicorn_error-' + SUFFIX),
+            'encoding': 'utf8',
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 30,
+        }
     },
     'formatters': {
         'verbose': {
@@ -127,6 +147,16 @@ LOGGING = {
         },
         'openstack': {
             'handlers': ['console', 'openstack'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'gunicorn_access': {
+            'handlers': ['console', 'gunicorn_access'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'gunicorn_error': {
+            'handlers': ['console', 'gunicorn_error'],
             'level': 'DEBUG',
             'propagate': False,
         },

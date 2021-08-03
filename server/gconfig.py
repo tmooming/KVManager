@@ -1,3 +1,4 @@
+import logging
 import os
 # gunicorn -c server/gconfig.py wsgi:my_app
 # Sample Gunicorn configuration file.
@@ -18,8 +19,10 @@ import os
 #
 #       Must be a positive integer. Generally set in the 64-2048
 #       range.
+from logging.handlers import WatchedFileHandler
+
 bind = '10.122.110.80:5000'
-prev_dir = '/srv/KVManager'  # 前缀
+prev_dir = '/home/imagemgr/KVManager'  # 前缀
 backlog = 2048
 
 #
@@ -167,8 +170,16 @@ access_log_format = '%(t)s %(p)s %(h)s "%(r)s" %(s)s %(L)s %(b)s %(f)s" "%(a)s"'
 
 logfile = prev_dir+"/server/logs/gunicorn_log.log"
 # accesslog = '-'
-accesslog = prev_dir+"/server/logs/gunicorn_access.log"      #访问日志文件
-errorlog = prev_dir+"/server/logs/gunicorn_error.log"        #错误日志文件
+# accesslog = prev_dir+"/server/logs/gunicorn_access.log"      #访问日志文件
+# errorlog = prev_dir+"/server/logs/gunicorn_error.log"        #错误日志文件
+accesslog = "/dev/null" #访问日志文件的路径
+errorlog = "/dev/null" #错误日志文件的路径
+acclog = logging.getLogger('gunicorn_access')
+acclog.addHandler(WatchedFileHandler(prev_dir+'/server/logs/gunicorn_access/gunicorn_access.log'))
+acclog.propagate = False
+errlog = logging.getLogger('gunicorn_error')
+errlog.addHandler(WatchedFileHandler(prev_dir+'/server/logs/gunicorn_error/gunicorn_error.log'))
+errlog.propagate = False
 #
 # Process naming
 #

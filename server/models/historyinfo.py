@@ -15,7 +15,7 @@ from sqlalchemy.sql import func
 
 
 class HistoryInfo(db.Model):
-
+    print('ssssssss')
     __tablename__ = 'history_info'
     id = db.Column(
         db.Integer,

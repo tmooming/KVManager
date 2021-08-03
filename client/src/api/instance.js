@@ -58,9 +58,9 @@ export function upload_instance_image(name, params) {
   })
 }
 
-export function upload_instance_image_info() {
+export function upload_instance_image_info(uuid) {
   return request({
-    url: '/api/upload_instance_image_info',
+    url: '/api/upload_instance_image_info/' + uuid,
     method: 'get'
   })
 }

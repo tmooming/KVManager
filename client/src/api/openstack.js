@@ -50,9 +50,9 @@ export function upload_image(name, params) {
     data: params
   })
 }
-export function upload_image_info() {
+export function upload_image_info(uuid) {
   return request({
-    url: '/api/image_upload_info',
+    url: '/api/image_upload_info/' + uuid,
     method: 'get'
   })
 }

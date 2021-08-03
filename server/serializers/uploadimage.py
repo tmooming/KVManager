@@ -28,7 +28,7 @@ class UploadImageSchema(ma.SQLAlchemyAutoSchema):
     
     def get_by_time_and_md5(self,upload_md5,time_interval):
         now = datetime.now()
-        time_interval = now - timedelta(hours=time_interval)
+        time_interval = now - timedelta(hours=float(time_interval))
         uploadimage = UploadImage.query.filter(UploadImage.create_time > time_interval).filter_by(
             running_md5=upload_md5,upload_md5=upload_md5,delete_sig=0).first()
         if uploadimage:

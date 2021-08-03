@@ -117,7 +117,7 @@
                 <div class="searchWord">
                   <el-input v-model="search"
                             style="display: inline-block;width: 90%;margin-left: 5%"
-                            placeholder="请输入搜索内容"
+                            placeholder="请输入镜像名称搜索"
                   />
                 </div>
 
@@ -291,6 +291,7 @@ export default {
       pageSizes: [5, 10, 15, 20],
       // 默认每页显示的条数（可修改）
       PageSize: 10,
+      tabIndex: '',
       openstack_connection_Visible: false,
       openstack_data_table: [],
       search: '',
@@ -308,7 +309,6 @@ export default {
       },
       Openstack_Info_Value: '',
       Openstack_Info: [],
-      tabIndex: '',
       openstack_connection_rules: {
         auth_ip: [{ required: true, trigger: 'blur', validator: validateIP }]
       },
@@ -316,39 +316,6 @@ export default {
       random_key: ''
     }
   },
-  // computed: {
-  //   // 模糊搜索
-  //   tables() {
-  //     const search = this.search
-  //     if (search) {
-  //       // filter() 方法创建一个新的数组，新数组中的元素是通过检查指定数组中符合条件的所有元素。
-  //       // 注意： filter() 不会对空数组进行检测。
-  //       // 注意： filter() 不会改变原始数组。
-  //       return this.Openstack_Info.filter(data => {
-  //         return Object.keys(data).some(key => {
-  //           // indexOf() 返回某个指定的字符在某个字符串中首次出现的位置，如果没有找到就返回-1；
-  //           // 该方法对大小写敏感！所以之前需要toLowerCase()方法将所有查询到内容变为小写。
-  //           if (typeof data[key] === 'string') {
-  //             console.log(String(data[key]).toLowerCase().includes(search))
-  //             return String(data[key]).toLowerCase().includes(search)
-  //           //   return false
-  //           // } else {
-  //           //   return true
-  //           }
-  //
-  //           // return data.Image_Info[key]['status'].includes(search)
-  //           // return Object.keys(data.Image_Info[key]).some(item => {
-  //           //   if (typeof data.Image_Info[key][item] === 'string' && data.Image_Info[key][item].length > 0) {
-  //           //     console.log(String(data.Image_Info[key][item]).includes(search))
-  //           //     return data.Image_Info[key][item].includes(search)
-  //           //   }
-  //           //   // return String(data.Image_Info[key][item]||'').toLowerCase().indexOf(search) > -1
-  //           // })
-  //         })
-  //       })
-  //     }
-  //   }
-  // },
   created() {
     this.openstack_info()
   },

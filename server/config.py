@@ -28,8 +28,9 @@ class BaseConfig:
     # TESTING= False,  # 测试模式的设置，无限接近线上环境，不会重启项目，日志级别较高，不会在前端显示错误代码
     # PROPAGATE_EXCEPTIONS= None,
     # PRESERVE_CONTEXT_ON_EXCEPTION= None,
-    SECRET_KEY= None,  # session秘钥配置
-    PERMANENT_SESSION_LIFETIME= timedelta(days=31),  # session有效期时间的设置
+    SECRET_KEY = 'qwertyuioplkjhgfdsazxcvb',  # session秘钥配置
+    # PERMANENT_SESSION_LIFETIME = timedelta(days=0,seconds=60 * 60),  # session有效期时间的设置
+    # MAX_CONTENT_LENGTH = 1024 * 1024 * 1024 * 200
     SQLALCHEMY_POOL_SIZE = 100
     SQLALCHEMY_POOL_RECYCLE = 10
     SQLALCHEMY_TRACK_MODIFICATIONS = True
