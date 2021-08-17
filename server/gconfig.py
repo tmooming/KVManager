@@ -21,8 +21,8 @@ import os
 #       range.
 from logging.handlers import WatchedFileHandler
 
-bind = '10.122.110.80:5000'
-prev_dir = '/data/KVManager'  # 前缀
+bind = '127.0.0.1:5000'
+prev_dir = '/srv/KVManager'  # 前缀
 backlog = 2048
 
 #

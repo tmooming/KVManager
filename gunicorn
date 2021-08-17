@@ -1,5 +1,5 @@
 /data/KVManager/server/logs/gunicorn_access/gunicorn_access.log {
-su imagemgr imagemgr
+# 可能需要设置用户权限，如 su root root
 daily
 dateext
 dateformat _%Y_%m_%d
@@ -14,7 +14,7 @@ endscript
 
 }
 /data/KVManager/server/logs/gunicorn_error/gunicorn_error.log{
-    su imagemgr imagemgr
+    # 也可能需要设置用户权限
     daily
     dateext
     dateformat _%Y_%m_%d
@@ -23,7 +23,6 @@ endscript
     delaycompress
     missingok
     notifempty
-    create 644 imagemgr imagemgr
     postrotate
         /usr/bin/killall -HUP rsyslogd
     endscript

@@ -4,7 +4,7 @@
  * @Autor: Tu Ruwei
  * @Date: 2021-07-13 18:10:32
  * @LastEditors: Tu Ruwei
- * @LastEditTime: 2021-07-13 18:10:55
+ * @LastEditTime: 2021-08-17 10:50:42
 -->
 
 ## KVManager
@@ -75,6 +75,7 @@ vim gconfig.py
 vim resources/kvm/instance.py
 cp kvmanager.conf /etc/nginx/conf.d/
 cp kvmanager.service /etc/systemd/system/
+cp gunicorn /etc/logrotate.d/
 sudo systemctl daemon-reload
 sudo nginx -s reload
 sudo cp -r ../KVManager /srv/

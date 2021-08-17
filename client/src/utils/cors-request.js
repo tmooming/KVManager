@@ -5,7 +5,7 @@ import { getVirt_connect_token } from '@/utils/virt-info'
 // axios.defaults.withCredentials = true
 // create an axios instance
 const service = axios.create({
-  baseURL: 'http://10.122.110.80:5000', // url = base url + request url
+  baseURL: 'http://127.0.0.1:5000', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 1000 * 60 * 60, // request timeout:60 mins
   withCredentials: true
