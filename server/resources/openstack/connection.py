@@ -29,11 +29,12 @@ from utils.HTTP_Utils import (
     parse_request_data
 )
 import logging
+from loguru import logger as logger_openstack
 import sys
 sys.path.append('../..')
 from openstackManager.keystone import get_token_by_requests
-logger = logging.getLogger('openstack')
-
+#logger = logging.getLogger('openstack')
+logger = logger_openstack.bind(name="openstack")
 
 class OpenstackConnect(Resource):
     """

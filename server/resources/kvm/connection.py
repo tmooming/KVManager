@@ -32,6 +32,7 @@ from utils.HTTP_Utils import (
     MD5_Strs
 )
 import logging
+from loguru import logger as logger_compute
 import sys
 
 from utils.SqlToDict import queryToDict
@@ -41,9 +42,15 @@ from vrtManager.storage import wvmStorages
 from vrtManager.network import wvmNetworks
 from vrtManager.interface import wvmInterfaces, wvmInterface
 from vrtManager.nwfilters import wvmNWFilters
-logger = logging.getLogger('compute')
+#logger = logging.getLogger('compute')
 
-
+#logger.add('/home/imagemgr/test1.log',colorize=True,level='INFO',retention='1 week')
+# logger.add("/home/imagemgr/test.log", format="[{time:YYYY-MM-DD HH:mm:ss}] <lvl>{message}</lvl>", level="INFO", retention="3 days")
+# logger.info("If you're using Python {}, prefer {feature} of course!", 3.6, feature="f-strings")
+# logger.info("test info")
+# logger.debug("test debug")
+# logger.error("test error")
+logger = logger_compute.bind(name="compute")
 class HostInfo(Resource):
     """
     从数据库获取宿主机信息
@@ -199,8 +206,11 @@ class HostHistoryInfo(Resource):
         history_infos = db.session.query(HistoryInfo).order_by(desc('end_time')).limit(20).all()
         history_infos = queryToDict(history_infos)
         for i in range(len(history_infos)):
-            openstacks = {ip:name for ip,name in zip(history_infos[i]['openstacks_ip'].split(';'),history_infos[i]['openstacks_name'].split(';'))}
-            history_infos[i]['openstacks'] = openstacks
+            if not history_infos[i]['openstacks_ip']:
+                 history_infos[i]['openstacks'] = {}
+            else:
+                 openstacks = {ip:name for ip,name in zip(history_infos[i]['openstacks_ip'].split(';'),history_infos[i]['openstacks_name'].split(';'))}
+                 history_infos[i]['openstacks'] = openstacks
             history_infos[i].pop('openstacks_ip')
             history_infos[i].pop('openstacks_name')
         return {'data': history_infos,'message':'查询成功'},200

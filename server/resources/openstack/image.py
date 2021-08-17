@@ -34,12 +34,13 @@ from utils.HTTP_Utils import (
     parse_request_data
 )
 import logging
+from loguru import logger as logger_openstack
 import sys
 
 sys.path.append('../..')
 
-logger = logging.getLogger('openstack')
-
+#logger = logging.getLogger('openstack')
+logger = logger_openstack.bind(name="openstack")
 
 class ImagesDetail(Resource):
     def get(self, id_md5):
@@ -168,7 +169,7 @@ class ImageUpload(Resource):
             args_list = {arg.split('=')[0]: arg.split('=')[-1] for arg in iargs['argList']}
             args_list['container_format'] = 'bare'
             args_list['disk_format'] = 'raw'
-            args_list['visibility'] = 'shared'
+            args_list['visibility'] = 'public'
             if iargs['platform'] == 'windows':
                 args_list['os_type'] = 'windows'
             new_image = create_image(auth_ip=openstack.auth_ip, image_name=temp_name, username=openstack.user_name,

@@ -130,12 +130,7 @@ dmypy.json
 
 
 .DS_Store
-server/logs/app/*
-server/logs/instance/*
-server/logs/openstack/*
-server/logs/compute/*
-server/logs/user/*
-server/logs/gunicorn*
+server/logs/*
 client/node_modules/
 client/npm-debug.log*
 client/yarn-debug.log*

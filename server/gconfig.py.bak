@@ -1,5 +1,6 @@
 import logging
 import os
+from mrfh import MultiprocessRotatingFileHandler
 # gunicorn -c server/gconfig.py wsgi:my_app
 # Sample Gunicorn configuration file.
 
@@ -22,7 +23,7 @@ import os
 from logging.handlers import WatchedFileHandler
 
 bind = '10.122.110.80:5000'
-prev_dir = '/data/KVManager'  # 前缀
+prev_dir = '/home/imagemgr/KVManager'  # 前缀
 backlog = 2048
 
 #
@@ -87,7 +88,7 @@ worker_connections = 1000
 timeout = 600
 keepalive = 2
 chdir = prev_dir+'/server'  #gunicorn要切换到的目的工作目录
-#worker_class = 'gevent' #使用gevent模式，还可以使用sync 模式，默认的是sync模式
+# worker_class = 'gevent' #使用gevent模式，还可以使用sync 模式，默认的是sync模式
 
 #
 # Debugging
@@ -153,7 +154,7 @@ umask = 0
 user = None
 group = None
 tmp_upload_dir = None
-#preload_app=True
+
 #
 #   Logging
 #
@@ -170,8 +171,8 @@ access_log_format = '%(t)s %(p)s %(h)s "%(r)s" %(s)s %(L)s %(b)s %(f)s" "%(a)s"'
 
 # logfile = prev_dir+"/server/logs/gunicorn_log.log"
 # accesslog = '-'
-accesslog = prev_dir+"/server/logs/gunicorn_access/gunicorn_access.log"      #访问日志文件
-errorlog = prev_dir+"/server/logs/gunicorn_error/gunicorn_error.log"        #错误日志文件
+# accesslog = prev_dir+"/server/logs/gunicorn_access.log"      #访问日志文件
+# errorlog = prev_dir+"/server/logs/gunicorn_error.log"        #错误日志文件
 # accesslog = "/dev/null" #访问日志文件的路径
 # errorlog = "/dev/null" #错误日志文件的路径
 # acclog = logging.getLogger('gunicorn_access')
@@ -180,6 +181,60 @@ errorlog = prev_dir+"/server/logs/gunicorn_error/gunicorn_error.log"        #错
 # errlog = logging.getLogger('gunicorn_error')
 # errlog.addHandler(WatchedFileHandler(prev_dir+'/server/logs/gunicorn_error/gunicorn_error.log'))
 # errlog.propagate = False
+logconfig_dict = {
+    'version':1,
+    'disable_existing_loggers': False,
+    #在最新版本必须添加root配置，否则抛出Error: Unable to configure root logger
+    "root": {
+          "level": "DEBUG",
+          "handlers": ["console"] # 对应handlers字典的键（key）
+    },
+    'loggers':{
+        "gunicorn.error": {
+            "level": "DEBUG",# 打日志的等级；
+            "handlers": ["error_file"], # 对应handlers字典的键（key）；
+            #是否将日志打印到控制台（console），若为True（或1），将打印在supervisor日志监控文件logfile上，对于测试非常好用；
+            "propagate": 0,
+            "qualname": "gunicorn_error"
+        },
+
+        "gunicorn.access": {
+            "level": "DEBUG",
+            "handlers": ["access_file"],
+            "propagate": 0,
+            "qualname": "access"
+        }
+    },
+    'handlers':{
+        "error_file": {
+            "class": "mrfh.MultiprocessRotatingFileHandler",
+            "maxBytes": 1024*1024*100,# 打日志的大小（此处限制100mb）
+            "backupCount": 1,# 备份数量（若需限制日志大小，必须存在值，且为最小正整数）
+            "formatter": "generic",# 对应formatters字典的键（key）
+            "filename": prev_dir+"/server/logs/gunicorn_error/error.log" #若对配置无特别需求，仅需修改此路径
+        },
+        "access_file": {
+            "class": "mrfh.MultiprocessRotatingFileHandler",
+            "maxBytes": 1024*1024*100,
+            "backupCount": 1,
+            "formatter": "generic",
+            "filename": prev_dir+"/server/logs/gunicorn_access/access.log", #若对配置无特别需求，仅需修改此路径
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'level': 'DEBUG',
+            'formatter': 'generic',
+        },
+
+    },
+    'formatters':{
+        "generic": {
+            "format": "%(asctime)s [%(process)d]: [%(levelname)s] %(message)s", # 打日志的格式
+            "datefmt": "[%Y-%m-%d %H:%M:%S %z]",# 时间显示格式
+            "class": "logging.Formatter"
+        }
+    }
+}
 #
 # Process naming
 #

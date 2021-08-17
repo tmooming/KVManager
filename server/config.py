@@ -15,6 +15,8 @@ import platform
 from datetime import timedelta
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#LOG_FORMAT = '<level>{level: <8}</level>  <green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> - <cyan>{name}</cyan>:<cyan>{function}</cyan> - <level>{message}</level>'
+LOG_FORMAT = "[%(asctime)s] - %(filename)s [line:%(lineno)d] %(name)s - %(levelname)s: %(message)s"
 if platform.system() == "Windows":
     static_dir = os.path.join(BASE_DIR, r'dist\static')
     templates_dir = os.path.join(BASE_DIR, r'dist\templates')
@@ -34,6 +36,7 @@ class BaseConfig:
     SQLALCHEMY_POOL_SIZE = 100
     SQLALCHEMY_POOL_RECYCLE = 10
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+
     # USE_X_SENDFILE= False,
     # SERVER_NAME= None,  # 主机名设置
     # APPLICATION_ROOT= '/',  # 应用根目录配置

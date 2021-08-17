@@ -7,7 +7,7 @@ from libvirt import libvirtError
 from vrtManager import util
 from vrtManager.rwlock import ReadWriteLock
 
-logger = logging.getLogger('app')
+#logger = logging.getLogger('app')
 CONN_SOCKET = 4
 CONN_TLS = 3
 CONN_SSH = 2
@@ -25,7 +25,7 @@ TCP_PORT = 16509
 def error_handler(unused, error):
     if error[0] == libvirt.VIR_ERR_RPC and error[1] == libvirt.VIR_FROM_STREAMS:
         return
-    logger.warning(error)
+   # logger.warning(error)
 
 class wvmEventLoop(threading.Thread):
     """

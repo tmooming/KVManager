@@ -38,11 +38,11 @@ from flask_restful import (
 
 import logging
 import sys
-
+from loguru import logger as logger_instance
 sys.path.append("../..")
-
-logger = logging.getLogger("instance")
-
+#
+# logger = logging.getLogger("instance")
+logger = logger_instance.bind(name="instance")
 
 class InstancesInfo(Resource):
     """
@@ -243,23 +243,41 @@ class InstanceImageUpload(Resource):
         base_status = status = instance.get_instance_status(name)
         start_time = time()
         # 1.2.1 首先确保实例处于关机状态
-        while status != "shut off" and time() - start_time < 60:
-            # 如果没有关机，且尝试关机时间小于60秒
-            try:
-                if status == "running":
-                    instance.shutdown(name)
-                elif status == "paused":
-                    instance.force_shutdown(name)
-            except Exception as e:
+        if status != "shut off":
+            if status == "running":
+                instance.shutdown(name)
+            elif status == "paused":
                 instance.force_shutdown(name)
-            finally:
-                status = instance.get_instance_status(name)
+            while instance.get_instance_status(name) != 'shut off' and time() - start_time < 60:
+                sleep(1)
                 temp = json.loads(redis_client.get(self.uuid))
                 temp['start_time'] = time()
-                temp['status'] = status
+                temp['status'] = 'closing'
                 temp['message'] = '关机中'
                 redis_client.set(self.uuid, json.dumps(temp))
-        if status != "shut off":
+            start_time = time()
+            if instance.get_instance_status(name) != 'shut off':
+                instance.force_shutdown(name)
+                while instance.get_instance_status(name) != 'shut off' and time() - start_time < 30:
+                    sleep(1)
+        #
+        # while status != "shut off" and time() - start_time < 60:
+        #     # 如果没有关机，且尝试关机时间小于60秒
+        #     try:
+        #         if status == "running":
+        #             instance.shutdown(name)
+        #         elif status == "paused":
+        #             instance.force_shutdown(name)
+        #     except Exception as e:
+        #         instance.force_shutdown(name)
+        #     finally:
+        #         status = instance.get_instance_status(name)
+        #         temp = json.loads(redis_client.get(self.uuid))
+        #         temp['start_time'] = time()
+        #         temp['status'] = status
+        #         temp['message'] = '关机中'
+        #         redis_client.set(self.uuid, json.dumps(temp))
+        if instance.get_instance_status(name) != "shut off":
             # 1.2.2 如果关机失败，返回报错信息
             temp = json.loads(redis_client.get(self.uuid))
             temp['start_time'] = time()
@@ -299,7 +317,7 @@ class InstanceImageUpload(Resource):
                 db.session.add(upload_image)
                 db.session.commit()
                 # 1.2.6 将instance恢复原状
-                if base_status != status:
+                if base_status != instance.get_instance_status(name):
                     instance.start(name)
                 # image_status_info = {"start_time": copy_start_time, "step": 1, "status": "finish", "message": "上传就绪"}
                 temp = json.loads(redis_client.get(self.uuid))
