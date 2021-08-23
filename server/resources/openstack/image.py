@@ -185,7 +185,7 @@ class ImageUpload(Resource):
             #     fields={
             #         'field': (iargs['image_path'], open(iargs['image_path'], 'rb'), 'application/octet-stream')}
             # )
-            it = upload_in_chunks(iargs['image_path'], self.update_message)
+            it = upload_in_chunks(iargs['image_path'], self)
             data = IterableToFileAdapter(it)
             # data_stream = MultipartEncoderMonitor(e, self.update_message)
             upload = upload_image_data(auth_ip=openstack.auth_ip, image_id=new_image['id'],
