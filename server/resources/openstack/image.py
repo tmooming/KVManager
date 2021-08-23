@@ -29,18 +29,18 @@ from flask_restful import (
     Resource
 )
 
+from utils.MD5 import upload_in_chunks,IterableToFileAdapter
 from utils.HTTP_Utils import (
     parse_request_url_keys,
     parse_request_data
 )
 import logging
-from loguru import logger as logger_openstack
 import sys
 
 sys.path.append('../..')
 
-#logger = logging.getLogger('openstack')
-logger = logger_openstack.bind(name="openstack")
+logger = logging.getLogger('openstack')
+
 
 class ImagesDetail(Resource):
     def get(self, id_md5):
@@ -103,14 +103,12 @@ class ImageUpload(Resource):
         self.auth_ip = None
         self.uuid = None
 
-    def update_message(self, monitor):
-        if monitor.bytes_read % 1000 == 0 or monitor.bytes_read == monitor.len:
-            percent = monitor.bytes_read / monitor.len * 100
-            temp = json.loads(redis_client.get(self.uuid))
-            temp['start_time'] = time()
-            temp['status'] = 'upload'
-            temp['message'] = self.auth_ip + '上传进度：{:.2f}%'.format(percent)
-            redis_client.set(self.uuid, json.dumps(temp))
+    def update_message(self, message):
+        temp = json.loads(redis_client.get(self.uuid))
+        temp['start_time'] = time()
+        temp['status'] = 'upload'
+        temp['message'] = self.auth_ip + message
+        redis_client.set(self.uuid, json.dumps(temp))
 
     def put(self, name):
 
@@ -169,7 +167,7 @@ class ImageUpload(Resource):
             args_list = {arg.split('=')[0]: arg.split('=')[-1] for arg in iargs['argList']}
             args_list['container_format'] = 'bare'
             args_list['disk_format'] = 'raw'
-            args_list['visibility'] = 'public'
+            args_list['visibility'] = 'shared'
             if iargs['platform'] == 'windows':
                 args_list['os_type'] = 'windows'
             new_image = create_image(auth_ip=openstack.auth_ip, image_name=temp_name, username=openstack.user_name,
@@ -183,13 +181,15 @@ class ImageUpload(Resource):
                 redis_client.set(self.uuid, json.dumps(temp))
                 history_info['action'] += ';' + openstack.auth_ip + ' 创建镜像失败'
                 continue
-            e = MultipartEncoder(
-                fields={
-                    'field': (iargs['image_path'], open(iargs['image_path'], 'rb'), 'application/octet-stream')}
-            )
-            data_stream = MultipartEncoderMonitor(e, self.update_message)
+            # e = MultipartEncoder(
+            #     fields={
+            #         'field': (iargs['image_path'], open(iargs['image_path'], 'rb'), 'application/octet-stream')}
+            # )
+            it = upload_in_chunks(iargs['image_path'], self.update_message)
+            data = IterableToFileAdapter(it)
+            # data_stream = MultipartEncoderMonitor(e, self.update_message)
             upload = upload_image_data(auth_ip=openstack.auth_ip, image_id=new_image['id'],
-                                       data=data_stream, username=openstack.user_name,
+                                       data=data, username=openstack.user_name,
                                        password=openstack.password, by_data=True)
             if isinstance(upload, tuple):
                 logger.error(upload[0])
